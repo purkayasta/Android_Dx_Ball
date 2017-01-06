@@ -1,48 +1,34 @@
 package embedded_programing_final_term_project.dx_ball;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
+import android.util.Log;
 
 public class Bar{
     MainGameView mainGameView;
     Bitmap barBitmap;
-    int barWidth,barHeight;
-    Point bottomcenterPoint,topleftPoint= new Point(0,0);
-    int leftmostPoint,rightmostPoint;
+    float leftmostPoint,centerPoint,topPoint,barWidth,barHeight;
 
-    public Bar(MainGameView mainGameView, int bitmapId){
+    public Bar(MainGameView mainGameView, int bitmapId, Context context){
         this.mainGameView = mainGameView;
         Bitmap tempBitmap = BitmapFactory.decodeResource(mainGameView.context.getResources(),bitmapId);
         tempBitmap = Bitmap.createScaledBitmap(tempBitmap,mainGameView.screenX/2,mainGameView.screenY/8,true);
         barBitmap = tempBitmap;
         barHeight = barBitmap.getHeight();
         barWidth = barBitmap.getWidth();
-        bottomcenterPoint = new Point(mainGameView.screenX/4,mainGameView.screenY);
-        topleftPoint.y = bottomcenterPoint.y-barHeight;
-        updateInfo();
+
+        centerPoint = context.getResources().getDisplayMetrics().widthPixels/2;
+        leftmostPoint = centerPoint - barWidth/2;
+        topPoint = (context.getResources().getDisplayMetrics().heightPixels -
+                context.getResources().getDisplayMetrics().density*10-barHeight);
     }
 
-    private void updateInfo() {
-        leftmostPoint = bottomcenterPoint.x-barHeight/2;
-        rightmostPoint = bottomcenterPoint.x-barWidth/2;
-        topleftPoint.x =leftmostPoint;
-    }
+    public void latestBarPosition(float x, Context context) {
+        if((x-(barWidth/2))>0 && (x+(barWidth/2))<context.getResources().getDisplayMetrics().widthPixels){
+            leftmostPoint = x-(barWidth/2);
 
-    public void moveDocktoLeft(){
-        bottomcenterPoint.x-=14;
-        updateInfo();
+            Log.d("Bar","leftmostPoint: "+leftmostPoint+"barWidth/2: "+barWidth/2);
+        }
     }
-    public void moveDocktoright(){
-        bottomcenterPoint.x+=14;
-        updateInfo();
-    }
-
-    public void startMovingLeft(){
-        moveDocktoLeft();
-    }
-    public void startMovingRight(){
-        moveDocktoright();
-    }
-
 }

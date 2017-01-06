@@ -85,7 +85,7 @@ public class MainGameView extends SurfaceView implements Runnable {
 
         //PaddleBar
 
-        bar = new Bar(this,R.drawable.bar);
+        bar = new Bar(this,R.drawable.bar,context);
 
 
         //Ball
@@ -107,7 +107,7 @@ public class MainGameView extends SurfaceView implements Runnable {
     public void createBricksAndRestart(){
 
         // Put the ball back to the start
-      //  ball.reset(screenX, screenY);
+        //  ball.reset(screenX, screenY);
 
         int brickWidth = screenX / 5;
         int brickHeight = screenY / 9;
@@ -165,7 +165,7 @@ public class MainGameView extends SurfaceView implements Runnable {
             canvas.drawColor(Color.WHITE);
 
 
-            canvas.drawBitmap(bar.barBitmap,bar.topleftPoint.x,bar.topleftPoint.y,null);
+            canvas.drawBitmap(bar.barBitmap,bar.leftmostPoint,bar.topPoint,null);
 
             paint.setColor(Color.RED);
             paint.setStyle(Paint.Style.FILL);
@@ -210,30 +210,9 @@ public class MainGameView extends SurfaceView implements Runnable {
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction()) {
-
-            case MotionEvent.ACTION_DOWN:
-                paused = false;
-                if (event.getX() > (screenX / 2)) {
-                    bar.startMovingRight();
-                } else {
-                    bar.startMovingLeft();
-                }
-                break;
-
-            case MotionEvent.ACTION_UP:
-                if (event.getX() > (screenX / 2)) {
-                    bar.startMovingRight();
-                } else {
-                    bar.startMovingLeft();
-                }
-                break;
             case MotionEvent.ACTION_MOVE:
-                if (event.getX() > (screenX / 2)) {
-                    bar.startMovingRight();
-                } else {
-                    bar.startMovingLeft();
-                }
-                break;
+                bar.latestBarPosition(event.getX(),context);
+
         }
         return true;
     }

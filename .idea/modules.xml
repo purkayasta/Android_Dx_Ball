@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android_Dx_Ball.iml" filepath="$PROJECT_DIR$/Android_Dx_Ball.iml" />
       <module fileurl="file://$PROJECT_DIR$/Dx_Ball-bdb748e11b9e72f15c46c2d398ba1978ee3e73ec.iml" filepath="$PROJECT_DIR$/Dx_Ball-bdb748e11b9e72f15c46c2d398ba1978ee3e73ec.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
