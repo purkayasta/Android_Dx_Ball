@@ -10,18 +10,24 @@
     tools:context="embedded_programing_final_term_project.dx_ball.WelcomeActivity">
 
     <ImageButton
-        android:id="@+id/press_to_play"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_weight="0.0"
-        android:background="@drawable/welcome_pic" />
+        android:background="@drawable/welcome_pic"
+        android:backgroundTint="@color/red"
+        android:tint="@color/deep_green" />
+
     <TextView
+        android:id="@+id/press_to_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.0"
+        android:fontFamily="cursive"
         android:gravity="center"
+        android:lineSpacingExtra="12sp"
         android:text="@string/press_to_play"
-        android:textColor="@color/deep_green"
-        android:textSize="40dp" />
+        android:textColor="@android:color/holo_blue_bright"
+        android:textSize="45dp"
+        android:textStyle="normal|bold" />
 
 </LinearLayout>

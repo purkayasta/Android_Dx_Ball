@@ -1,12 +1,12 @@
 package embedded_programing_final_term_project.dx_ball;
 
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-
-public class Ball{
+public class Ball {
     private int gameOver=0;
     private Point p;
     private int x;
@@ -16,9 +16,14 @@ public class Ball{
     private  int dx;
     private int dy;
     private Paint paint;
+    Canvas canvas;
 
+    public Ball(Canvas canvas){
+        this.canvas = canvas;
+    }
 
     public  Ball(int x,int y,int col,int radius){
+        //p=new Point(x,y);
         this.x=x;
         this.y=y;
         col=c;
@@ -76,10 +81,22 @@ public class Ball{
         y=y+dy;
     }
 
-
     public void ballBoundaryChech(Canvas canvas) {
+        this.canvas = canvas;
 
-        if((this.x+this.r)>=canvas.getWidth() || (this.x-this.r)<=0){
+        /*
+        if((this.y-this.r)>=canvas.getHeight()){
+
+            canvas.life-=1;
+            canvas.newLife=true;
+            this.gameOver=1;
+        }
+
+        if(MyCanvas.life==0)
+            MyCanvas.gameOver = true;
+            */
+        if((this.x+this.r)>=canvas.getWidth()
+                || (this.x-this.r)<=0){
             this.dx = -this.dx;
         }
         if( (this.y-this.r)<=0){
@@ -88,15 +105,13 @@ public class Ball{
     }
 
 
-    public void bounce(Point canvas){
-
+    public void bounce(Canvas canvas){
         move();
-
-        if(x == canvas.x || x < 0){
+        if(x == canvas.getWidth()|| x < 0){
             x=0;
             y=0;
         }
-        if(y == canvas.x || y < 0){
+        if(y == canvas.getWidth() || y < 0){
 
             x=0;
             x=0;

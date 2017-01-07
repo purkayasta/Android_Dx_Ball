@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -15,19 +16,13 @@ import android.view.WindowManager;
 import java.util.Random;
 
 
-/**
- * Created by Sunny on 12/28/2016.
- */
-
 public class MainGameView extends SurfaceView implements Runnable {
+    public static int canvasHeight, canvasWidth;
     //Using Paint And Canvas in a thread need a surface holder object
     SurfaceHolder ourHolder;
-
     //Thread
     Thread gameThread = null;
-
     Context context;
-
     //Game is set or unset Need a boolean to decide
     volatile boolean playing;
     //Game Is Paused at the start
@@ -36,16 +31,33 @@ public class MainGameView extends SurfaceView implements Runnable {
     long fps;
     //Canvas and Paint objects
     Canvas canvas;
-    Paint paint,paint1;
-    // Track the fps rate
-    private long timeThisFrame;
-
+    Paint paint, paint1;
     //Screen Size
-    int screenX,screenY;
+    int screenX, screenY;
     //Players Paddle Bar
 
 
-    Ball myBall;
+    Ball ball;
+    float left,
+            right,
+            top,
+            bottom;
+
+    float downX,
+            downY,
+            upX,
+            upY;
+
+    boolean
+            leftPos,
+            rightPos,
+            first = true;
+
+    int min_distance = 50;
+
+    int ballSpeed;
+
+
 
     Bar bar;
     //bricks
@@ -57,15 +69,15 @@ public class MainGameView extends SurfaceView implements Runnable {
     int r = rand.nextInt();
     int g = rand.nextInt();
     int b = rand.nextInt();
+    // Track the fps rate
+    private long timeThisFrame;
 
-
-
-    public  static int canvasHeight, canvasWidth;
 
     //Constructor
-    public MainGameView(Context context,Canvas canvas) {
+    public MainGameView(Context context, Canvas canvas) {
         super(context);
         this.context = context;
+        this.canvas = canvas;
         ourHolder = getHolder();
         paint = new Paint();
         Log.d("Ok", "MainGameView: ");
@@ -83,43 +95,38 @@ public class MainGameView extends SurfaceView implements Runnable {
 
 
 
+
         //PaddleBar
 
-        bar = new Bar(this,R.drawable.bar,context);
+        bar = new Bar(this, R.drawable.bar, context);
 
-
-        //Ball
-        myBall = new Ball(screenX/2,screenY/2,Color.RED,30);
-        myBall.bounce(size);
-        myBall.setDx(5);
-        myBall.setDy(5);
-        myBall.move();
-
+        ball = new Ball(screenX/2,screenY/2,Color.RED,30);
 
 
 
 
         //Bricks
-
         createBricksAndRestart();
-
     }
-    public void createBricksAndRestart(){
+
+    public void createBricksAndRestart() {
+
+
 
         // Put the ball back to the start
         //  ball.reset(screenX, screenY);
 
-        int brickWidth = screenX / 5;
+        int brickWidth = screenX / 3;
         int brickHeight = screenY / 9;
 
         // Build a wall of bricks
         numBricks = 0;
         //paint.setARGB(255,r,g,b);
 
-        for(int column = 0; column < 6; column ++ ){
-            for(int row = 0; row < 4; row ++ ){
+        for (int column = 0; column < 3; column++) {
+            for (int row = 0; row < 3; row++) {
                 bricks[numBricks] = new Bricks(row, column, brickWidth, brickHeight);
-                numBricks ++;
+                numBricks++;
             }
         }
 
@@ -129,61 +136,70 @@ public class MainGameView extends SurfaceView implements Runnable {
     //Runnable Object
     @Override
     public void run() {
-        while (playing){
+        while (playing) {
             //Capture the current time
             long startFrameTime = System.currentTimeMillis();
             //Update the frame
-            if (!paused){
+            if (!paused) {
                 update();
             }
             //Draw the frame
             draw();
-
             //Calculate the fps
             timeThisFrame = System.currentTimeMillis() - startFrameTime;
-            if (timeThisFrame >= 1){
+            if (timeThisFrame >= 1) {
                 fps = 1000 / timeThisFrame;
             }
         }
     }
 
-    public void update() {
-        myBall.move();
-        for (int i=0;i < numBricks; i++){
-            if (bricks[i].getVisibility()){
-
-            }
-        }
+    private void update() {
+        ball.move();
     }
 
 
+
     public void draw() {
-        if (ourHolder.getSurface().isValid()){
+        //this.canvas = canvas;
+
+        if (ourHolder.getSurface().isValid()) {
             //Lock the canvas
             canvas = ourHolder.lockCanvas();
             //Draw Background Color
             canvas.drawColor(Color.WHITE);
 
 
-            canvas.drawBitmap(bar.barBitmap,bar.leftmostPoint,bar.topPoint,null);
+            canvas.drawBitmap(bar.barBitmap, bar.leftmostPoint, bar.topPoint, null);
 
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(myBall.getX(),myBall.getY(),myBall.getRadius(), myBall.getPaint());
+            //Ball
+
+            canvas.drawCircle(ball.getX(), ball.getY(), ball.getRadius(), ball.getPaint());
+            ball.bounce(canvas);
+            ball.setDx(2);
+            ball.setDy(-2);
+            ball.ballBoundaryChech(canvas);
+            ball.move();
+
+
+
+
 
             // Draw the bricks if visible
-            for(int i = 0; i < numBricks; i++){
-                if(bricks[i].getVisibility()) {
-                    if (i%6==0){
+            for (int i = 0; i < numBricks; i++) {
+
+                if (bricks[i].getVisibility()) {
+                    if (i % 4 == 0) {
                         paint.setColor(Color.BLUE);
                         canvas.drawRect(bricks[i].getRect(), paint);
-                    }else{
+                    } else {
                         paint.setColor(Color.BLACK);
                         canvas.drawRect(bricks[i].getRect(), paint);
                     }
 
                 }
+
             }
+
 
             //Now Unlock
             ourHolder.unlockCanvasAndPost(canvas);
@@ -191,16 +207,17 @@ public class MainGameView extends SurfaceView implements Runnable {
         }
     }
 
-    public void pause(){
+    public void pause() {
         playing = false;
         try {
             gameThread.join();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.d("Error", "Joining thread");
         }
     }
-    public void resume(){
+
+    public void resume() {
         playing = true;
         gameThread = new Thread(this);
         gameThread.start();
@@ -211,8 +228,14 @@ public class MainGameView extends SurfaceView implements Runnable {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                bar.latestBarPosition(event.getX(),context);
-
+                bar.latestBarPosition(event.getX(), context);
+                break;
+            case MotionEvent.ACTION_DOWN:
+                bar.latestBarPosition(event.getX(), context);
+                break;
+            case MotionEvent.ACTION_UP:
+                bar.latestBarPosition(event.getX(), context);
+                break;
         }
         return true;
     }
