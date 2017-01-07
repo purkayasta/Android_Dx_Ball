@@ -25,7 +25,7 @@ public class Bar{
     }
 
     public void latestBarPosition(float x, Context context) {
-        if((x-(barWidth/2))>0 && (x+(barWidth/2))<context.getResources().getDisplayMetrics().widthPixels){
+        if((x-(barWidth/2))>0 && (x+(barWidth/2)) < context.getResources().getDisplayMetrics().widthPixels){
             leftmostPoint = x-(barWidth/2);
 
             Log.d("Bar","leftmostPoint: "+leftmostPoint+"barWidth/2: "+barWidth/2);

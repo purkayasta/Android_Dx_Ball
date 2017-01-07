@@ -1,6 +1,7 @@
 package embedded_programing_final_term_project.dx_ball;
 
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,20 +19,25 @@ public class Ball {
     private Paint paint;
     Canvas canvas;
 
+    float dW,dH;
+
     public Ball(Canvas canvas){
         this.canvas = canvas;
     }
 
     public  Ball(int x,int y,int col,int radius){
-        //p=new Point(x,y);
+        //xBall Position
         this.x=x;
+        //YBall Position
         this.y=y;
-        col=c;
+        c = col;
         r=radius;
         paint=new Paint();
-        paint.setColor(Color.RED);
+        paint.setColor(c);
         dx=0;
         dy=0;
+
+
     }
     public int getX(){
         return x;
@@ -77,24 +83,14 @@ public class Ball {
     }
 
     public void move(){
-        x=x+dx;
-        y=y+dy;
+        _checkBarBallCollusion();
     }
 
-    public void ballBoundaryChech(Canvas canvas) {
+    public void ballBoundaryCheck(Canvas canvas) {
         this.canvas = canvas;
+        dW = canvas.getWidth();
+        dH = canvas.getHeight();
 
-        /*
-        if((this.y-this.r)>=canvas.getHeight()){
-
-            canvas.life-=1;
-            canvas.newLife=true;
-            this.gameOver=1;
-        }
-
-        if(MyCanvas.life==0)
-            MyCanvas.gameOver = true;
-            */
         if((this.x+this.r)>=canvas.getWidth()
                 || (this.x-this.r)<=0){
             this.dx = -this.dx;
@@ -104,8 +100,24 @@ public class Ball {
         }
     }
 
+    private void _checkBarBallCollusion() {
+        if (x >= (dW - r)){
+            dx = -dx;
+        }
+        if (x <= r){
+            dx = -dx;
+        }
+        if (y <= r){
+            dy = -dy;
+        }
+
+        x += dx;
+        y += dy;
+    }
+
 
     public void bounce(Canvas canvas){
+        ballBoundaryCheck(canvas);
         move();
         if(x == canvas.getWidth()|| x < 0){
             x=0;

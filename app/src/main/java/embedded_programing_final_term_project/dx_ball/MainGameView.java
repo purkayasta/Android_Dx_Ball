@@ -154,7 +154,7 @@ public class MainGameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        ball.move();
+
     }
 
 
@@ -173,14 +173,15 @@ public class MainGameView extends SurfaceView implements Runnable {
 
             //Ball
 
+
+
             canvas.drawCircle(ball.getX(), ball.getY(), ball.getRadius(), ball.getPaint());
             ball.bounce(canvas);
             ball.setDx(2);
-            ball.setDy(-2);
-            ball.ballBoundaryChech(canvas);
-            ball.move();
+            ball.setDy(2);
 
 
+            this.ballBarCollision(bar,ball,canvas);
 
 
 
@@ -201,11 +202,22 @@ public class MainGameView extends SurfaceView implements Runnable {
             }
 
 
+
+
             //Now Unlock
             ourHolder.unlockCanvasAndPost(canvas);
 
         }
     }
+
+    public void ballBarCollision(Bar myBar,Ball myBall,Canvas canvas) {
+        if (((myBall.getY() + myBall.getRadius()) >= myBar.leftmostPoint) && ((myBall.getY() + myBall.getRadius()) <= myBar.leftmostPoint) && ((myBall.getX()) >= myBar.leftmostPoint) && ((myBall.getX()) <= myBar.leftmostPoint)) {
+            myBall.setDy(-(myBall.getDy()));
+
+        }
+    }
+
+
 
     public void pause() {
         playing = false;
