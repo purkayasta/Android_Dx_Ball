@@ -101,14 +101,14 @@ public class Ball {
     }
 
     private void _checkBarBallCollusion() {
-        if (x >= (dW - r)){
-            dx = -dx;
+        if (this.x >= (dW - this.r)){
+            this.dx = -this.dx;
         }
-        if (x <= r){
-            dx = -dx;
+        if (this.x <= this.r){
+            this.dx = -this.dx;
         }
-        if (y <= r){
-            dy = -dy;
+        if (this.y <= this.r){
+            this.dy = -this.dy;
         }
 
         x += dx;
@@ -117,8 +117,11 @@ public class Ball {
 
 
     public void bounce(Canvas canvas){
+
         ballBoundaryCheck(canvas);
+
         move();
+
         if(x == canvas.getWidth()|| x < 0){
             x=0;
             y=0;
