@@ -23,7 +23,7 @@ public class Bar{
         right=0;
         bottom=0;
         paint=new Paint();
-        paint.setColor(Color.CYAN);
+        paint.setColor(Color.GRAY);
 
     }
 

@@ -9,10 +9,7 @@ import android.graphics.RectF;
 
 public class Bricks {
     float top,bottom,left,right;
-    Canvas canvas = new Canvas();
     Paint paint;
-    Point point;
-    int x,y;
     int color;
 
 

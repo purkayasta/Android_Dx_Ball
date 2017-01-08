@@ -31,24 +31,14 @@ public class MainGameView extends View implements Runnable {
     float brickX = 0, brickY= 0;
 
 
-    float left,
-            right,
-            top,
-            bottom;
+    float left, right, top, bottom;
 
-    float downX,
-            downY,
-            upX,
-            upY;
+    float downX, downY, upX, upY;
 
-    boolean
-            leftPos,
-            rightPos,
-            first = true;
+    boolean leftPos, rightPos, first = true;
 
     int min_distance = 10;
 
-    int ballSpeed;
 
 
     public static int checkWidth=0;
@@ -74,31 +64,22 @@ public class MainGameView extends View implements Runnable {
         canvasHeight=canvas.getHeight();
         canvasWidth=canvas.getWidth();
 
-        if(first==true) {
+        if(first) {
 
             first = false;
 
             for(int i=0; i<12; i++){
-                int color;
 
                 //CREATE BRICK POSITION
-                if(brickX>=canvas.getWidth()) {
+                if(brickX > canvas.getWidth()) {
                     brickX = 0;
                     brickY += 80;
                 }
 
-                //CHECK COLOR
-                if(i%6==0)
-                    color = Color.BLACK;
-                else
-                    color = Color.BLUE;
-
                 //ADD NEW BRICK
-                bricks.add(new Bricks(brickX,brickY,brickX+canvas.getWidth()/5,brickY+140,Color.BLACK));
-
+                bricks.add(new Bricks(brickX,brickY,brickX+canvas.getWidth()/5,brickY+120,Color.BLUE));
                 brickX += canvas.getWidth() / 5;
             }
-
 
             myBall=new Ball( canvas.getWidth()/2, canvas.getHeight()/2 ,Color.RED, 20);
             myBall.bounce(canvas);
@@ -115,41 +96,23 @@ public class MainGameView extends View implements Runnable {
             checkWidth = canvas.getWidth();
 
             myBall.setDx(2);
-            myBall.setDy(2);
+            myBall.setDy(-2);
 
             Log.d("", bricks.size() + "");
 
         }
 
-        //LEVEL ONE
-        /*
-        paint.setTextSize(30);
-        paint.setFakeBoldText(true);
-        paint.setARGB(10, 0,0,0);
-        canvas.drawText("LEVEL 1", canvas.getWidth() / 2 - 100 , canvas.getHeight() / 2 - 100, paint);
-
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
-        */
+        canvas.drawColor(Color.BLACK);
         //Ball
         canvas.drawCircle(myBall.getX(), myBall.getY(), myBall.getRadius(), myBall.getPaint());
-        /*
-        paint.setTextSize(30);
-        paint.setFakeBoldText(true);
-        canvas.drawText("Score: "+score,10,30,paint);
 
-        paint.setTextSize(30);
-        paint.setFakeBoldText(true);
-        canvas.drawText("Life: "+life,canvas.getWidth()-110,40,paint);
-
-*/
 
         //Bar
         canvas.drawRect(myBar.getLeft(), myBar.getTop(), myBar.getRight(), myBar.getBottom(), myBar.getPaint());
 
         //bricks
-        for(int i=0;i<bricks.size();i++){
-            canvas.drawRect(bricks.get(i).getLeft(),bricks.get(i).getTop(),bricks.get(i).getRight(),bricks.get(i).getBottom(),bricks.get(i).getPaint());
+        for(int i=0;i<bricks.size()-1;i++){
+            canvas.drawRect(bricks.get(i).getLeft(),bricks.get(i).getTop(),bricks.get(i).getRight()-2,bricks.get(i).getBottom(),bricks.get(i).getPaint());
         }
 
 
@@ -188,9 +151,7 @@ public class MainGameView extends View implements Runnable {
     public void ballBrickCollision(ArrayList<Bricks> br , Ball myBall, Canvas canvas){
         for(int i=0;i<br.size();i++) {
             if (((myBall.getY() - myBall.getRadius()) <= br.get(i).getBottom()) && ((myBall.getY() + myBall.getRadius()) >= br.get(i).getTop()) && ((myBall.getX()) >= br.get(i).getLeft()) && ((myBall.getX()) <= br.get(i).getRight())) {
-                //mp.start();
                 br.remove(i);
-
                 myBall.setDy(-(myBall.getDy()));
             }
         }
@@ -218,8 +179,7 @@ public class MainGameView extends View implements Runnable {
                 if(Math.abs(deltaX) > Math.abs(deltaY)){
                     if(Math.abs(deltaX) > min_distance) {
                         if (deltaX < 0) {
-                            //left=left+100;
-                            //right=right+100;
+
 
                             leftPos=true;
                             rightPos=false;
