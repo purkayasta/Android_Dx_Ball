@@ -17,7 +17,6 @@ public class Ball {
     private int dy;
     private Paint paint;
     public  Ball(int x,int y,int col,int radius){
-        //p=new Point(x,y);
         this.x=x;
         this.y=y;
         col=c;

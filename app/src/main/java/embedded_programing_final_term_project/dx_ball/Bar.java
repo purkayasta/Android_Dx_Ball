@@ -74,7 +74,6 @@ public class Bar{
         }
         else if(rightPos==true){
             if(0<=left) {
-                //if()
                 left = left - 10;
                 right = right - 10;
             }

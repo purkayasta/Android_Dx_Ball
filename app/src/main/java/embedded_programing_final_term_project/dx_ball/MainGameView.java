@@ -21,8 +21,7 @@ public class MainGameView extends View implements Runnable {
     Bar myBar;
 
 
-    public  static int canvasHeight,
-            canvasWidth;
+    public  static int canvasHeight, canvasWidth;
 
 
     float barWidth = 500;
@@ -69,14 +68,11 @@ public class MainGameView extends View implements Runnable {
             first = false;
 
             for(int i=0; i<12; i++){
-
-                //CREATE BRICK POSITION
                 if(brickX > canvas.getWidth()) {
                     brickX = 0;
                     brickY += 80;
                 }
 
-                //ADD NEW BRICK
                 bricks.add(new Bricks(brickX,brickY,brickX+canvas.getWidth()/5,brickY+120,Color.BLUE));
                 brickX += canvas.getWidth() / 5;
             }
@@ -115,8 +111,6 @@ public class MainGameView extends View implements Runnable {
             canvas.drawRect(bricks.get(i).getLeft(),bricks.get(i).getTop(),bricks.get(i).getRight()-2,bricks.get(i).getBottom(),bricks.get(i).getPaint());
         }
 
-
-
         if(gameOver){
 
             gameOver = false;
@@ -139,7 +133,6 @@ public class MainGameView extends View implements Runnable {
         myBar.moveBar(leftPos,rightPos);
         this.run();
 
-
     }
     public void ballBarCollision(Bar myBar,Ball myBall,Canvas canvas){
         if(((myBall.getY()+myBall.getRadius())>=myBar.getTop())&&((myBall.getY()+myBall.getRadius())<=myBar.getBottom())&& ((myBall.getX())>=myBar.getLeft())&& ((myBall.getX())<=myBar.getRight())) {
@@ -157,8 +150,6 @@ public class MainGameView extends View implements Runnable {
         }
 
     }
-
-
     //Moving Bar
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -222,8 +213,6 @@ public class MainGameView extends View implements Runnable {
         }
         return super.onTouchEvent(event);
     }
-
-
 
     @Override
     public void run() {

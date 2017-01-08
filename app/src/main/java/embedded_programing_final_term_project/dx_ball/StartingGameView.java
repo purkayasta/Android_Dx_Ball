@@ -8,7 +8,6 @@ public class StartingGameView extends AppCompatActivity {
 
     MainGameView gameView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,12 +18,10 @@ public class StartingGameView extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //gameView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //gameView.resume();
     }
 }
