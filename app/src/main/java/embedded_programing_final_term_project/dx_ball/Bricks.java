@@ -1,38 +1,65 @@
 package embedded_programing_final_term_project.dx_ball;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.RectF;
 
-/**
- * Created by Sunny on 12/29/2016.
- */
+
 
 public class Bricks {
+    float top,bottom,left,right;
+    Canvas canvas = new Canvas();
+    Paint paint;
+    Point point;
+    int x,y;
+    int color;
 
-    private RectF rect;
 
-    private boolean isVisible;
+    Bricks(float left,float top,float right,float bottom,int color){
 
-    public Bricks(int row, int column, int width, int height){
-
-        isVisible = true;
-
-        float padding = 0.88f;
-
-        rect = new RectF(column * width + padding,
-                row * height + padding,
-                column * width + width - padding,
-                row * height + height - padding);
+        this.left =left;
+        this.top=top;
+        this.right=right;
+        this.bottom=bottom;
+        this.color=color;
+        paint=new Paint();
+        paint.setColor(color);
     }
 
-    public RectF getRect(){
-        return this.rect;
+    public void setBottom(float bottom) {
+        this.bottom = bottom;
     }
 
-    public void setInvisible(){
-        isVisible = false;
+    public void setLeft(float left) {
+        this.left = left;
     }
 
-    public boolean getVisibility(){
-        return isVisible;
+    public void setRight(float right) {
+        this.right = right;
+    }
+
+    public void setTop(float top) {
+        this.top = top;
+    }
+
+    public float getLeft() {
+        return left;
+    }
+
+    public float getRight() {
+        return right;
+    }
+
+    public float getBottom() {
+        return bottom;
+    }
+
+    public Paint getPaint() {
+        return paint;
+    }
+
+    public float getTop() {
+        return top;
     }
 }

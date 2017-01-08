@@ -1,7 +1,6 @@
 package embedded_programing_final_term_project.dx_ball;
 
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,27 +16,16 @@ public class Ball {
     private  int dx;
     private int dy;
     private Paint paint;
-    Canvas canvas;
-
-    float dW,dH;
-
-    public Ball(Canvas canvas){
-        this.canvas = canvas;
-    }
-
     public  Ball(int x,int y,int col,int radius){
-        //xBall Position
+        //p=new Point(x,y);
         this.x=x;
-        //YBall Position
         this.y=y;
-        c = col;
+        col=c;
         r=radius;
         paint=new Paint();
-        paint.setColor(c);
+        paint.setColor(Color.RED);
         dx=0;
         dy=0;
-
-
     }
     public int getX(){
         return x;
@@ -83,13 +71,21 @@ public class Ball {
     }
 
     public void move(){
-        _checkBarBallCollusion();
+        x=x+dx;
+        y=y+dy;
     }
 
-    public void ballBoundaryCheck(Canvas canvas) {
-        this.canvas = canvas;
-        dW = canvas.getWidth();
-        dH = canvas.getHeight();
+    public void ballBoundaryChech(Canvas canvas) {
+
+        if((this.y-this.r)>=canvas.getHeight()){
+
+            MainGameView.life-=1;
+            MainGameView.newLife=true;
+            this.gameOver=1;
+        }
+
+        if(MainGameView.life==0)
+            MainGameView.gameOver = true;
 
         if((this.x+this.r)>=canvas.getWidth()
                 || (this.x-this.r)<=0){
@@ -100,28 +96,9 @@ public class Ball {
         }
     }
 
-    private void _checkBarBallCollusion() {
-        if (this.x >= (dW - this.r)){
-            this.dx = -this.dx;
-        }
-        if (this.x <= this.r){
-            this.dx = -this.dx;
-        }
-        if (this.y <= this.r){
-            this.dy = -this.dy;
-        }
-
-        x += dx;
-        y += dy;
-    }
-
 
     public void bounce(Canvas canvas){
-
-        ballBoundaryCheck(canvas);
-
         move();
-
         if(x == canvas.getWidth()|| x < 0){
             x=0;
             y=0;

@@ -4,40 +4,33 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.WindowManager;
-
-import java.util.Random;
+import android.view.View;
+import java.util.ArrayList;
 
 
-public class MainGameView extends SurfaceView implements Runnable {
-    public static int canvasHeight, canvasWidth;
-    //Using Paint And Canvas in a thread need a surface holder object
-    SurfaceHolder ourHolder;
-    //Thread
-    Thread gameThread = null;
-    Context context;
-    //Game is set or unset Need a boolean to decide
-    volatile boolean playing;
-    //Game Is Paused at the start
-    boolean paused = true;
-    //To Track the frame per second rate
-    long fps;
-    //Canvas and Paint objects
-    Canvas canvas;
-    Paint paint, paint1;
-    //Screen Size
-    int screenX, screenY;
-    //Players Paddle Bar
+
+public class MainGameView extends View implements Runnable {
+
+    public static boolean gameOver;
+    public static boolean newLife;
+    public static int life;
+    Paint paint;
+    Ball myBall;
+    Bar myBar;
 
 
-    Ball ball;
+    public  static int canvasHeight,
+            canvasWidth;
+
+
+    float barWidth = 500;
+
+
+    float brickX = 0, brickY= 0;
+
+
     float left,
             right,
             top,
@@ -53,202 +46,228 @@ public class MainGameView extends SurfaceView implements Runnable {
             rightPos,
             first = true;
 
-    int min_distance = 50;
+    int min_distance = 10;
 
     int ballSpeed;
 
 
-
-    Bar bar;
-    //bricks
-    // Up to 200 bricks
-    Bricks[] bricks = new Bricks[50];
-    int numBricks = 0;
-
-    Random rand = new Random();
-    int r = rand.nextInt();
-    int g = rand.nextInt();
-    int b = rand.nextInt();
-    // Track the fps rate
-    private long timeThisFrame;
+    public static int checkWidth=0;
+    ArrayList<Bricks> bricks=new ArrayList<Bricks>();
 
 
-    //Constructor
-    public MainGameView(Context context, Canvas canvas) {
+    public MainGameView(Context context) {
         super(context);
-        this.context = context;
-        this.canvas = canvas;
-        ourHolder = getHolder();
-        paint = new Paint();
-        Log.d("Ok", "MainGameView: ");
+        paint=new Paint();
 
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        this.screenX = size.x;
-        this.screenY = size.y;
-
-        Log.d(String.valueOf(screenX), "X");
-        Log.d(String.valueOf(screenY), "Y");
-
-
-
-
-        //PaddleBar
-
-        bar = new Bar(this, R.drawable.bar, context);
-
-        ball = new Ball(screenX/2,screenY/2,Color.RED,30);
-
-
-
-
-        //Bricks
-        createBricksAndRestart();
-    }
-
-    public void createBricksAndRestart() {
-
-
-
-        // Put the ball back to the start
-        //  ball.reset(screenX, screenY);
-
-        int brickWidth = screenX / 3;
-        int brickHeight = screenY / 9;
-
-        // Build a wall of bricks
-        numBricks = 0;
-        //paint.setARGB(255,r,g,b);
-
-        for (int column = 0; column < 3; column++) {
-            for (int row = 0; row < 3; row++) {
-                bricks[numBricks] = new Bricks(row, column, brickWidth, brickHeight);
-                numBricks++;
-            }
-        }
+        myBar=new Bar();
+        life = 1;
+        gameOver=false;
+        newLife=true;
 
     }
 
 
-    //Runnable Object
+    //Draw ca
     @Override
-    public void run() {
-        while (playing) {
-            //Capture the current time
-            long startFrameTime = System.currentTimeMillis();
-            //Update the frame
-            if (!paused) {
-                update();
+    protected void onDraw(Canvas canvas) {
+
+        canvasHeight=canvas.getHeight();
+        canvasWidth=canvas.getWidth();
+
+        if(first==true) {
+
+            first = false;
+
+            for(int i=0; i<12; i++){
+                int color;
+
+                //CREATE BRICK POSITION
+                if(brickX>=canvas.getWidth()) {
+                    brickX = 0;
+                    brickY += 80;
+                }
+
+                //CHECK COLOR
+                if(i%6==0)
+                    color = Color.BLACK;
+                else
+                    color = Color.BLUE;
+
+                //ADD NEW BRICK
+                bricks.add(new Bricks(brickX,brickY,brickX+canvas.getWidth()/5,brickY+140,Color.BLACK));
+
+                brickX += canvas.getWidth() / 5;
             }
-            //Draw the frame
-            draw();
-            //Calculate the fps
-            timeThisFrame = System.currentTimeMillis() - startFrameTime;
-            if (timeThisFrame >= 1) {
-                fps = 1000 / timeThisFrame;
+
+
+            myBall=new Ball( canvas.getWidth()/2, canvas.getHeight()/2 ,Color.RED, 20);
+            myBall.bounce(canvas);
+
+            left = getWidth() / 2 - (barWidth / 2);
+            top = getHeight() - 20;
+            right = getWidth() / 2 + (barWidth / 2);
+            bottom = getHeight();
+
+            myBar.setBottom(bottom);
+            myBar.setLeft(left);
+            myBar.setRight(right);
+            myBar.setTop(top);
+            checkWidth = canvas.getWidth();
+
+            myBall.setDx(2);
+            myBall.setDy(2);
+
+            Log.d("", bricks.size() + "");
+
+        }
+
+        //LEVEL ONE
+        /*
+        paint.setTextSize(30);
+        paint.setFakeBoldText(true);
+        paint.setARGB(10, 0,0,0);
+        canvas.drawText("LEVEL 1", canvas.getWidth() / 2 - 100 , canvas.getHeight() / 2 - 100, paint);
+
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        */
+        //Ball
+        canvas.drawCircle(myBall.getX(), myBall.getY(), myBall.getRadius(), myBall.getPaint());
+        /*
+        paint.setTextSize(30);
+        paint.setFakeBoldText(true);
+        canvas.drawText("Score: "+score,10,30,paint);
+
+        paint.setTextSize(30);
+        paint.setFakeBoldText(true);
+        canvas.drawText("Life: "+life,canvas.getWidth()-110,40,paint);
+
+*/
+
+        //Bar
+        canvas.drawRect(myBar.getLeft(), myBar.getTop(), myBar.getRight(), myBar.getBottom(), myBar.getPaint());
+
+        //bricks
+        for(int i=0;i<bricks.size();i++){
+            canvas.drawRect(bricks.get(i).getLeft(),bricks.get(i).getTop(),bricks.get(i).getRight(),bricks.get(i).getBottom(),bricks.get(i).getPaint());
+        }
+
+
+
+        if(gameOver){
+
+            gameOver = false;
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ((StartingGameView)getContext()).finish();
+        }
+
+
+        this.ballBrickCollision(bricks,myBall,canvas);
+        this.ballBarCollision(myBar,myBall, canvas);
+        myBall.ballBoundaryChech(canvas);
+
+        myBall.move();
+
+        myBar.moveBar(leftPos,rightPos);
+        this.run();
+
+
+    }
+    public void ballBarCollision(Bar myBar,Ball myBall,Canvas canvas){
+        if(((myBall.getY()+myBall.getRadius())>=myBar.getTop())&&((myBall.getY()+myBall.getRadius())<=myBar.getBottom())&& ((myBall.getX())>=myBar.getLeft())&& ((myBall.getX())<=myBar.getRight())) {
+            myBall.setDy(-(myBall.getDy()));
+
+        }
+
+    }
+    public void ballBrickCollision(ArrayList<Bricks> br , Ball myBall, Canvas canvas){
+        for(int i=0;i<br.size();i++) {
+            if (((myBall.getY() - myBall.getRadius()) <= br.get(i).getBottom()) && ((myBall.getY() + myBall.getRadius()) >= br.get(i).getTop()) && ((myBall.getX()) >= br.get(i).getLeft()) && ((myBall.getX()) <= br.get(i).getRight())) {
+                //mp.start();
+                br.remove(i);
+
+                myBall.setDy(-(myBall.getDy()));
             }
         }
-    }
-
-    private void update() {
 
     }
 
 
+    //Moving Bar
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:{
+                downX=event.getX();
+                downY=event.getY();
+                return true;
 
-    public void draw() {
-        //this.canvas = canvas;
+            }
+            case MotionEvent.ACTION_UP:{
+                upX=event.getX();
+                upY=event.getY();
 
-        if (ourHolder.getSurface().isValid()) {
-            //Lock the canvas
-            canvas = ourHolder.lockCanvas();
-            //Draw Background Color
-            canvas.drawColor(Color.WHITE);
+                float deltaX=downX-upX;
+                float deltaY=downY-upY;
 
+                if(Math.abs(deltaX) > Math.abs(deltaY)){
+                    if(Math.abs(deltaX) > min_distance) {
+                        if (deltaX < 0) {
+                            //left=left+100;
+                            //right=right+100;
 
-            canvas.drawBitmap(bar.barBitmap, bar.leftmostPoint, bar.topPoint, null);
+                            leftPos=true;
+                            rightPos=false;
+                            myBar.moveBar(leftPos, rightPos);
+                            return true;
+                        }
 
-            //Ball
+                        if (deltaX > 0) {
+                            leftPos=false;
+                            rightPos=true;
+                            myBar.moveBar(leftPos,rightPos);
+                            //Right to left
+                            return true;
 
-
-
-            canvas.drawCircle(ball.getX(), ball.getY(), ball.getRadius(), ball.getPaint());
-            ball.bounce(canvas);
-            ball.setDx(2);
-            ball.setDy(2);
-
-
-            this.ballBarCollision(bar,ball,canvas);
-
-
-
-            // Draw the bricks if visible
-            for (int i = 0; i < numBricks; i++) {
-
-                if (bricks[i].getVisibility()) {
-                    if (i % 4 == 0) {
-                        paint.setColor(Color.BLUE);
-                        canvas.drawRect(bricks[i].getRect(), paint);
-                    } else {
-                        paint.setColor(Color.BLACK);
-                        canvas.drawRect(bricks[i].getRect(), paint);
+                        }
                     }
+                    else{
+                        return  false;
+                    }
+                }
+                else{
+                    if(Math.abs(deltaY) > min_distance) {
+                        if (deltaY < 0) {
+                            //top to bottom
+                            return true;
+                        }
+                        if (deltaY > 0) {
+                            //bottom to top
+                            return true;
 
+                        }
+                    }
+                    else{
+                        return  false;
+                    }
                 }
 
             }
 
-
-
-
-            //Now Unlock
-            ourHolder.unlockCanvasAndPost(canvas);
-
         }
-    }
-
-    public void ballBarCollision(Bar myBar,Ball myBall,Canvas canvas) {
-        if (((myBall.getY() + myBall.getRadius()) >= myBar.leftmostPoint) && ((myBall.getY() + myBall.getRadius()) <= myBar.leftmostPoint) && ((myBall.getX()) >= myBar.leftmostPoint) && ((myBall.getX()) <= myBar.leftmostPoint)) {
-            myBall.setDy(-(myBall.getDy()));
-
-        }
+        return super.onTouchEvent(event);
     }
 
 
-
-    public void pause() {
-        playing = false;
-        try {
-            gameThread.join();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("Error", "Joining thread");
-        }
-    }
-
-    public void resume() {
-        playing = true;
-        gameThread = new Thread(this);
-        gameThread.start();
-    }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public void run() {
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                bar.latestBarPosition(event.getX(), context);
-                break;
-            case MotionEvent.ACTION_DOWN:
-                bar.latestBarPosition(event.getX(), context);
-                break;
-            case MotionEvent.ACTION_UP:
-                bar.latestBarPosition(event.getX(), context);
-                break;
-        }
-        return true;
+        invalidate();
     }
 }

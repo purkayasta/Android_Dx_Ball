@@ -3,32 +3,83 @@ package embedded_programing_final_term_project.dx_ball;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.Log;
 
 public class Bar{
-    MainGameView mainGameView;
-    Bitmap barBitmap;
-    float leftmostPoint,centerPoint,topPoint,barWidth,barHeight;
+    float top,bottom,left,right;
+    Canvas canvas = new Canvas();
+    Paint paint;
+    Point point;
+    int x,y;
 
-    public Bar(MainGameView mainGameView, int bitmapId, Context context){
-        this.mainGameView = mainGameView;
-        Bitmap tempBitmap = BitmapFactory.decodeResource(mainGameView.context.getResources(),bitmapId);
-        tempBitmap = Bitmap.createScaledBitmap(tempBitmap,mainGameView.screenX/2,mainGameView.screenY/8,true);
-        barBitmap = tempBitmap;
-        barHeight = barBitmap.getHeight();
-        barWidth = barBitmap.getWidth();
 
-        centerPoint = context.getResources().getDisplayMetrics().widthPixels/2;
-        leftmostPoint = centerPoint - barWidth/2;
-        topPoint = (context.getResources().getDisplayMetrics().heightPixels -
-                context.getResources().getDisplayMetrics().density*10-barHeight);
+    Bar(){
+        left =0;
+        top=0;
+        right=0;
+        bottom=0;
+        paint=new Paint();
+        paint.setColor(Color.CYAN);
+
     }
 
-    public void latestBarPosition(float x, Context context) {
-        if((x-(barWidth/2))>0 && (x+(barWidth/2)) < context.getResources().getDisplayMetrics().widthPixels){
-            leftmostPoint = x-(barWidth/2);
+    public void setBottom(float bottom) {
+        this.bottom = bottom;
+    }
 
-            Log.d("Bar","leftmostPoint: "+leftmostPoint+"barWidth/2: "+barWidth/2);
+    public void setLeft(float left) {
+        this.left = left;
+    }
+
+    public void setRight(float right) {
+        this.right = right;
+    }
+
+    public void setTop(float top) {
+        this.top = top;
+    }
+
+    public float getLeft() {
+        return left;
+    }
+
+    public float getRight() {
+        return right;
+    }
+
+    public float getBottom() {
+        return bottom;
+    }
+
+    public Paint getPaint() {
+        return paint;
+    }
+
+    public float getTop() {
+        return top;
+    }
+
+    public void moveBar(boolean leftPos,boolean rightPos){
+        if(leftPos==true){
+            if(MainGameView.checkWidth>=right) {
+                left = left + 10;
+                right = right + 10;
+            }
+
+
         }
+        else if(rightPos==true){
+            if(0<=left) {
+                //if()
+                left = left - 10;
+                right = right - 10;
+            }
+
+        }
+
     }
 }

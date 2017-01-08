@@ -7,24 +7,24 @@ import android.os.Bundle;
 public class StartingGameView extends AppCompatActivity {
 
     MainGameView gameView;
-    Canvas canvas;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gameView = new MainGameView(this,canvas);
+        gameView = new MainGameView(this);
         setContentView(gameView);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gameView.pause();
+        //gameView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        gameView.resume();
+        //gameView.resume();
     }
 }
